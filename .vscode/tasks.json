@@ -1,0 +1,57 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build osu!indirect.Main Debug",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "osu_indirect.Main"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        /*{
+            "label": "run Test",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "test"
+            ],
+            "problemMatcher": "$msCompile"
+        },*/
+        {
+            "label": "build osu!indirect.Main Release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "osu_indirect.Main",
+                "-c",
+                "Release"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish osu!indirect.Main",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "osu_indirect.Main",
+                "-c",
+                "Release"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
