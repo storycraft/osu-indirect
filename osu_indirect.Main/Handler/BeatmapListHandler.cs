@@ -53,7 +53,7 @@ namespace osu_indirect.Main.Handler
                     Console.WriteLine("Beatmap SetId: " + beatmapInfo.SetId);
                     Console.WriteLine("Beatmap Name: " + beatmapInfo.Name);
 
-                    string fileName = beatmapInfo.SetId + " " + beatmapInfo.Name;
+                    string fileName = beatmapInfo.SetId + " " + string.Join("_", beatmapInfo.Name.Split(Path.GetInvalidFileNameChars()));
                     Console.WriteLine("Starting downloading " + fileName);
 
                     try

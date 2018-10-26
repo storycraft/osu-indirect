@@ -30,7 +30,7 @@ namespace osu_indirect.Main
 
             Console.WriteLine("osu!indirect v0.1\n\n");
 
-            if (args.Length > 1 && OsuApi.OsuApi.IsKeyValid(args[0]))
+            if (args.Length > 0 && OsuApi.OsuApi.IsKeyValid(args[0]))
             {
                 OsuApi.OsuApi.ApiKey = args[0];
             }
