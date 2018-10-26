@@ -30,18 +30,14 @@ namespace osu_indirect.Main
 
             Console.WriteLine("osu!indirect v0.1\n\n");
 
-            string apiKey = null;
-
             if (args.Length > 1 && OsuApi.OsuApi.IsKeyValid(args[0]))
             {
-                //PRINT SOME MESSAGES LATER
+                OsuApi.OsuApi.ApiKey = args[0];
             }
             else
             {
                 while (!AskApiKey());
             }
-
-            OsuApi.OsuApi.ApiKey = apiKey;
 
             IpcServerChannel channel = RemoteHooking.IpcCreateServer<IpcShellExecuteInterface>(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton);
             executionHandler = new ExecutionHandler();
