@@ -45,9 +45,10 @@ namespace osu_indirect.Main
 
             int found = InjectToProcess(PROCESS_NAME, channelName, InjectionLibrary);
 
-            if (found < 0)
+            if (found < 1)
             {
                 Console.WriteLine("Cannot find any osu! process.");
+                Console.ReadKey();
             }
             else
             {
