@@ -25,7 +25,7 @@ namespace osu_indirect.Hook
             this.channelName = channelName;
             this.server = RemoteHooking.IpcConnectClient<IpcShellExecuteInterface>(channelName);
         }
-
+        
         public void Run(RemoteHooking.IContext context, string channelName)
         {
             server.IsClientInstalled(RemoteHooking.GetCurrentProcessId());

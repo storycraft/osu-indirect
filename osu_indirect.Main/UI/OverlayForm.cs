@@ -16,5 +16,10 @@ namespace osu_indirect.Main.UI
         {
             InitializeComponent();
         }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+
+        }
     }
 }

@@ -1,0 +1,3 @@
+[submodule "osu-util"]
+	path = osu-util
+	url = https://github.com/storycraft/osu-util.git

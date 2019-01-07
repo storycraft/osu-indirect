@@ -1,6 +1,7 @@
 ﻿using EasyHook;
 using osu_indirect.Hook;
 using osu_indirect.Main.Handler;
+using OsuUtil;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -47,13 +49,54 @@ namespace osu_indirect.Main
 
             if (found < 1)
             {
-                Console.WriteLine("Cannot find any osu! process.");
-                Console.ReadKey();
+                Console.WriteLine("Starting osu!");
+                StartOsuProcess();
+
+                Process[] processList = Process.GetProcessesByName(PROCESS_NAME);
+
+                found = processList.Length;
+
+                if (found < 1)
+                {
+                    Console.WriteLine("Cannot find any osu! process.");
+                    Console.ReadKey();
+
+                    return;
+                }
+
+                Exception exception = null;
+                int i = 1;
+                for (; i <= 15; i++)
+                {
+                    try
+                    {
+                        Thread.Sleep(i * 1000);
+                        InjectToProcess(PROCESS_NAME, channelName, InjectionLibrary);
+
+                        break;
+                    } catch (Exception e)
+                    {
+                        Console.WriteLine("Waitng for osu! start...");
+                        exception = e;
+                    }
+                }
+
+                if (i >= 10)
+                {
+                    Console.WriteLine("Cannot create and inject to osu! process " + exception.Message);
+                    Console.ReadKey();
+
+                    return;
+                }
             }
-            else
-            {
-                Application.Run();
-            }
+
+            Application.Run();
+        }
+
+        private static void StartOsuProcess()
+        {
+            if (OsuFinder.IsOsuInstalled())
+                Process.Start(Path.Combine(OsuFinder.TryFindOsuLocation(), "osu!.exe"));
         }
 
         internal static bool AskApiKey()
@@ -78,11 +121,16 @@ namespace osu_indirect.Main
 
             foreach (Process proc in processList)
             {
-                Console.WriteLine("Found " + processName + " process"/* + " with pid " + proc.Id*/);
-                RemoteHooking.Inject(proc.Id, injectionLibrary, injectionLibrary, channelName);
+                InjectToProcess(proc, channelName, injectionLibrary);
             }
 
             return processList.Length;
+        }
+
+        public static void InjectToProcess(Process proc, string channelName, string injectionLibrary)
+        {
+            Console.WriteLine("Found " + proc.ProcessName + " process"/* + " with pid " + proc.Id*/);
+            RemoteHooking.Inject(proc.Id, injectionLibrary, injectionLibrary, channelName);
         }
     }
 }

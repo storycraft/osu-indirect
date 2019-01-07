@@ -38,6 +38,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OsuUtil">
+      <HintPath>D:\Story Workspace\osu-indirect\osu-util\bin\Release\OsuUtil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -56,12 +59,18 @@
     <Compile Include="Handler\UriHandler.cs" />
     <Compile Include="Handler\ExecutionHandler.cs" />
     <Compile Include="Handler\IAppHandler.cs" />
+    <Compile Include="Mirror\BloodcatMirror.cs" />
     <Compile Include="Mirror\IMirror.cs" />
     <Compile Include="Mirror\RippleMirror.cs" />
     <Compile Include="OsuApi\BeatmapInfo.cs" />
     <Compile Include="OsuApi\OsuApi.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UI\OverlayForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,6 +109,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\OverlayForm.resx">
+      <DependentUpon>OverlayForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

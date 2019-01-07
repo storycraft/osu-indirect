@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using osu_indirect.Hook;
 using osu_indirect.Hook.Pinvoke;
 using osu_indirect.Main.Mirror;
 using osu_indirect.Main.OsuApi;
+using osu_indirect.Main.UI;
 using osu_indirect.Main.Util;
 using static osu_indirect.Hook.Pinvoke.Win32Helper;
 
@@ -18,7 +20,16 @@ namespace osu_indirect.Main.Handler
     {
         public const string BEATMAP_PATH = "b";
 
-        private static IMirror mirror = new RippleMirror();
+        private static IMirror mirror = new BloodcatMirror();
+
+        private Form overlayForm = new OverlayForm();
+
+        public BeatmapListHandler()
+        {
+            overlayForm.Visible = true;
+            overlayForm.ShowInTaskbar = false;
+            overlayForm.Show();
+        }
 
         public override bool CanHandle(SHELLEXECUTEINFO info)
         {
@@ -59,13 +70,13 @@ namespace osu_indirect.Main.Handler
                     try
                     {
                         string tempFile = Path.Combine(Path.GetTempPath(), fileName + ".osz");
-                        FileUtil.WriteStream(mirror.DownloadMapset(beatmapInfo.SetId), tempFile, FileMode.CreateNew);
+                        FileUtil.WriteStream(mirror.DownloadMapset(beatmapInfo.SetId), tempFile, FileMode.Create);
                         Console.WriteLine(fileName + " download complete");
 
                         Process.Start(IpcShellExecuteInterface.ClientProcess.MainModule.FileName, tempFile);
                     } catch (Exception e) {
                         Console.WriteLine("Error on beatmap downloading: " + e.Message);
-                        Console.WriteLine("Maybe not cached in ripple. Opening browser instead");
+                        Console.WriteLine("Opening browser instead");
                         Process.Start(new ProcessStartInfo()
                         {
                             UseShellExecute = true,
