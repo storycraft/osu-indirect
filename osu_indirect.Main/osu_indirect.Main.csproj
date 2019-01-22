@@ -46,6 +46,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Handler\BeatmapListHandler.cs" />
     <Compile Include="Handler\OsuWebHandler.cs" />
+    <Compile Include="Handler\ScreenshotHandler.cs" />
     <Compile Include="Handler\UriHandler.cs" />
     <Compile Include="Handler\ExecutionHandler.cs" />
     <Compile Include="Handler\IAppHandler.cs" />
@@ -71,11 +73,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\OverlayForm.cs">
+    <Compile Include="UI\BeatmapOverlayForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\OverlayForm.Designer.cs">
-      <DependentUpon>OverlayForm.cs</DependentUpon>
+    <Compile Include="UI\BeatmapOverlayForm.Designer.cs">
+      <DependentUpon>BeatmapOverlayForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Util\FileUtil.cs" />
   </ItemGroup>
@@ -114,8 +116,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OverlayForm.resx">
-      <DependentUpon>OverlayForm.cs</DependentUpon>
+    <EmbeddedResource Include="UI\BeatmapOverlayForm.resx">
+      <DependentUpon>BeatmapOverlayForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -13,6 +13,9 @@ namespace osu_indirect.Main.Mirror
         public Stream DownloadMapset(int setId)
         {
             WebClient infoClient = new WebClient();
+
+            infoClient.Headers.Add(HttpRequestHeader.UserAgent, "osu-indirect");
+            
             return infoClient.OpenRead(new Uri("https://bloodcat.com/osu/s/" + setId));
         }
 

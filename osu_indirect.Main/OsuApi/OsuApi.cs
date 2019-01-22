@@ -32,6 +32,7 @@ namespace osu_indirect.Main.OsuApi
                         SetId = obj["beatmapset_id"].Value<int>(),
 
                         Name = obj["title"].Value<string>(),
+                        Artist = obj["artist"].Value<string>(),
 
                         Rank = (BeatmapRank) obj["approved"].Value<int>()
                     };

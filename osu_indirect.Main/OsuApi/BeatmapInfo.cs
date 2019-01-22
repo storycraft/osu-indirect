@@ -9,6 +9,7 @@ namespace osu_indirect.Main.OsuApi
     public class BeatmapInfo
     {
         public string Name { get; set; }
+        public string Artist { get; set; }
 
         public int Id { get; set; }
         public int SetId { get; set; }

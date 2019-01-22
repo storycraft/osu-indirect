@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Text;
 using System.Threading;
@@ -26,6 +27,15 @@ namespace osu_indirect.Main
             get => Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), HOOK_ASSEMBLY);
         }
 
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         static void Main(string[] args)
         {
             string channelName = null;
@@ -40,6 +50,8 @@ namespace osu_indirect.Main
             {
                 while (!AskApiKey());
             }
+
+            //ShowWindow(GetConsoleWindow(), SW_HIDE);
 
             IpcServerChannel channel = RemoteHooking.IpcCreateServer<IpcShellExecuteInterface>(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton);
             executionHandler = new ExecutionHandler();
@@ -74,7 +86,8 @@ namespace osu_indirect.Main
                         InjectToProcess(PROCESS_NAME, channelName, InjectionLibrary);
 
                         break;
-                    } catch (Exception e)
+                    }
+                    catch (Exception e)
                     {
                         Console.WriteLine("Waitng for osu! start...");
                         exception = e;
@@ -90,7 +103,8 @@ namespace osu_indirect.Main
                 }
             }
 
-            Application.Run();
+            while (true) ;
+  
         }
 
         private static void StartOsuProcess()

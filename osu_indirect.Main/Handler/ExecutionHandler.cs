@@ -21,6 +21,7 @@ namespace osu_indirect.Main.Handler
         internal void InitAppHandlers()
         {
             RegisterAppHandler(new BeatmapListHandler());
+            RegisterAppHandler(new ScreenshotHandler());
         }
 
         public void RegisterAppHandler(IAppHandler handler)

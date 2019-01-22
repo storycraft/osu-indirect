@@ -22,13 +22,9 @@ namespace osu_indirect.Main.Handler
 
         private static IMirror mirror = new BloodcatMirror();
 
-        private Form overlayForm = new OverlayForm();
-
         public BeatmapListHandler()
         {
-            overlayForm.Visible = true;
-            overlayForm.ShowInTaskbar = false;
-            overlayForm.Show();
+            Application.EnableVisualStyles();
         }
 
         public override bool CanHandle(SHELLEXECUTEINFO info)
@@ -45,45 +41,7 @@ namespace osu_indirect.Main.Handler
                 int beatmapId = int.Parse(uri.LocalPath.Remove(0, ("/" + BEATMAP_PATH + "/").Length));
                 Console.WriteLine("Beatmap Id: " + beatmapId);
 
-                new Task(() =>
-                {
-                    BeatmapInfo beatmapInfo = OsuApi.OsuApi.GetBeatmapInfo(beatmapId);
-
-                    if (beatmapInfo == null
-                        || (beatmapInfo.Rank != BeatmapRank.RANKED && beatmapInfo.Rank != BeatmapRank.APPROVED && beatmapInfo.Rank != BeatmapRank.LOVED && beatmapInfo.Rank != BeatmapRank.QUALIFIED))
-                    {
-                        Console.WriteLine("Cannot find beatmap " + beatmapId + " opening browser instead");
-                        Process.Start(new ProcessStartInfo()
-                        {
-                            UseShellExecute = true,
-                            FileName = rawUrl
-                        });
-                        return;
-                    }
-
-                    Console.WriteLine("Beatmap SetId: " + beatmapInfo.SetId);
-                    Console.WriteLine("Beatmap Name: " + beatmapInfo.Name);
-
-                    string fileName = beatmapInfo.SetId + " " + string.Join("_", beatmapInfo.Name.Split(Path.GetInvalidFileNameChars()));
-                    Console.WriteLine("Starting downloading " + fileName);
-
-                    try
-                    {
-                        string tempFile = Path.Combine(Path.GetTempPath(), fileName + ".osz");
-                        FileUtil.WriteStream(mirror.DownloadMapset(beatmapInfo.SetId), tempFile, FileMode.Create);
-                        Console.WriteLine(fileName + " download complete");
-
-                        Process.Start(IpcShellExecuteInterface.ClientProcess.MainModule.FileName, tempFile);
-                    } catch (Exception e) {
-                        Console.WriteLine("Error on beatmap downloading: " + e.Message);
-                        Console.WriteLine("Opening browser instead");
-                        Process.Start(new ProcessStartInfo()
-                        {
-                            UseShellExecute = true,
-                            FileName = rawUrl
-                        });
-                    }
-                }).Start();
+                ShowDownloadForm(rawUrl, beatmapId);
 
             } catch (Exception e)
             {
@@ -92,6 +50,77 @@ namespace osu_indirect.Main.Handler
             }
 
             return true;
+        }
+
+        public void ShowDownloadForm(string rawURL, int beatmapId)
+        {
+            BeatmapInfo beatmapInfo = OsuApi.OsuApi.GetBeatmapInfo(beatmapId);
+
+            BeatmapOverlayForm form = new BeatmapOverlayForm(beatmapInfo, rawURL, OnDownloadClick, OnBrowserClick, OnCloseClick);
+
+            form.Deactivate += new EventHandler(Deactivated);
+
+            form.ShowDialog();
+
+            Application.Run();
+        }
+
+        protected void OnDownloadClick(BeatmapOverlayForm form, int mapId, string mapName, string rawURL)
+        {
+
+            new Task(() =>
+            {
+                Console.WriteLine("Beatmap Name: " + mapName);
+                Console.WriteLine("Beatmap SetId: " + mapId);
+
+                string fileName = mapId + " " + string.Join("_", mapName.Split(Path.GetInvalidFileNameChars()));
+                Console.WriteLine("Starting downloading " + fileName);
+
+                try
+                {
+                    string tempFile = Path.Combine(Path.GetTempPath(), fileName + ".osz");
+                    FileUtil.WriteStream(mirror.DownloadMapset(mapId), tempFile, FileMode.Create);
+                    Console.WriteLine(fileName + " download complete");
+
+                    Process.Start(IpcShellExecuteInterface.ClientProcess.MainModule.FileName, tempFile);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("비트맵이 미러에 존재하지 않거나 다운로드가 실패했습니다. 웹브라우저를 엽니다");
+                    Console.WriteLine("Error on beatmap downloading: " + e.Message);
+                    Console.WriteLine("Opening browser instead");
+
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        UseShellExecute = true,
+                        FileName = rawURL
+                    });
+                }
+            }).Start();
+            
+            OnCloseClick(form, mapId, mapName, rawURL);
+        }
+
+        protected void OnBrowserClick(BeatmapOverlayForm form, int mapId, string mapName, string rawURL)
+        {
+            Process.Start(new ProcessStartInfo()
+            {
+                UseShellExecute = true,
+                FileName = rawURL
+            });
+
+            OnCloseClick(form, mapId, mapName, rawURL);
+        }
+
+        protected void OnCloseClick(BeatmapOverlayForm form, int mapId, string mapName, string rawURL)
+        {
+            form.Close();
+            Application.Exit();
+        }
+
+        protected void Deactivated(object obj, EventArgs args)
+        {
+            Application.Exit();
         }
     }
 }
